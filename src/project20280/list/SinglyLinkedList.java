@@ -22,7 +22,8 @@ public class SinglyLinkedList<E> implements List<E> {
          * @param n reference to a node that should follow the new node
          */
         public Node(E e, Node<E> n) {
-            // TODO
+            element = e;
+            next = n;
         }
 
         // Accessor methods
@@ -33,7 +34,7 @@ public class SinglyLinkedList<E> implements List<E> {
          * @return the element stored at the node
          */
         public E getElement() {
-            return null;
+            return element;
         }
 
         /**
@@ -42,8 +43,7 @@ public class SinglyLinkedList<E> implements List<E> {
          * @return the following node
          */
         public Node<E> getNext() {
-            // TODO
-            return null;
+            return next;
         }
 
         // Modifier methods
@@ -54,7 +54,7 @@ public class SinglyLinkedList<E> implements List<E> {
          * @param n the node that should follow this one
          */
         public void setNext(Node<E> n) {
-            // TODO
+            next = n;
         }
     } //----------- end of nested Node class -----------
 
@@ -73,55 +73,128 @@ public class SinglyLinkedList<E> implements List<E> {
     }              // constructs an initially empty list
 
     //@Override
-    public int size() {
-        // TODO
-        return 0;
+    public int size() { 
+        return size;
     }
 
     //@Override
     public boolean isEmpty() {
-        // TODO
+        if (size == 0) {
+            return true;
+        }
         return false;
     }
 
     @Override
     public E get(int position) {
-        // TODO
-        return null;
+        if (position < 0 || position >= size) {
+            throw new IndexOutOfBoundsException("Invalid position");
+        }
+        Node<E> curr = head;
+        for (int i = 0; i < position; i++) {
+            curr = curr.getNext();
+        }
+        return curr.getElement();
     }
 
     @Override
     public void add(int position, E e) {
-        // TODO
+        if (position < 0 || position > size) {
+            throw new IndexOutOfBoundsException("Invalid position");
+        }
+        if (position == 0) {
+            addFirst(e);
+        } else {
+            Node<E> prev = head;
+            for (int i = 0; i < position - 1; i++) {
+                prev = prev.getNext();
+            }
+            Node<E> newest = new Node<E>(e, prev.getNext());
+            prev.setNext(newest);
+            size++;
+        }
     }
 
 
     @Override
+    /**
+    * Adds an element to the front of the list.
+    *
+    * @param e the new element to add
+    */
     public void addFirst(E e) {
-        // TODO
+        head = new Node<E>(e, head); // Create and link a new node
+        size++;
     }
 
     @Override
-    public void addLast(E e) {
-        // TODO
+    /**
+    * Adds an element to the end of the list.
+    *
+    * @param e the new element to add
+    */
+public void addLast(E e) {
+    Node<E> newest = new Node<E>(e, null); // node will eventually be the tail
+    Node<E> last = head;
+    if(last == null) {
+       head = newest;
     }
+    else {
+      while (last.getNext() != null) { // advance to the last node
+       last = last.getNext();
+      }
+      last.setNext(newest); // new node after existing tail
+    }
+    size++;
+}
 
     @Override
     public E remove(int position) {
-        // TODO
-        return null;
+        if (position < 0 || position >= size) {
+            throw new IndexOutOfBoundsException("Invalid position");
+        }
+        if (position == 0) {
+            return removeFirst();
+        } else {
+            Node<E> prev = head;
+            for (int i = 0; i < position - 1; i++) {
+                prev = prev.getNext();
+            }
+            Node<E> curr = prev.getNext();
+            prev.setNext(curr.getNext());
+            size--;
+            return curr.getElement();
+        }
     }
 
     @Override
     public E removeFirst() {
-        // TODO
-        return null;
+        if (head == null) {
+            throw new IndexOutOfBoundsException("List is empty");
+        }
+        E element = head.getElement();
+        head = head.getNext();
+        size--;
+        return element;
     }
 
     @Override
     public E removeLast() {
-        // TODO
-        return null;
+        if (head == null) {
+            throw new IndexOutOfBoundsException("List is empty");
+        }
+        Node<E> curr = head;
+        while (curr.getNext() != null) {
+            curr = curr.getNext();
+        }
+        E element = curr.getElement();
+        Node<E> prev = head;
+        while (prev.getNext() != curr) {
+            prev = prev.getNext();
+        }
+        prev.setNext(null);
+        size--;
+        return element;
     }
 
     //@Override
