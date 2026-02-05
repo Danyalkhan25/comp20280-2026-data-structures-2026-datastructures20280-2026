@@ -213,7 +213,7 @@ public void addLast(E e) {
         @Override
         public E next() {
             E res = curr.getElement();
-            curr = curr.next;
+            curr = curr.getNext();
             return res;
         }
     }
