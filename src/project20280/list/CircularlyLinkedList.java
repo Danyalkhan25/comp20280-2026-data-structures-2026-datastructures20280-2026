@@ -42,8 +42,14 @@ public class CircularlyLinkedList<E> implements List<E> {
 
     @Override
     public E get(int i) {
-        // TODO
-        return null;
+        if (i < 0 || i >= size) {
+            throw new IndexOutOfBoundsException("Invalid index");
+        }
+        Node<E> curr = tail.getNext(); // Start from head
+        for (int j = 0; j < i; j++) {
+            curr = curr.getNext();
+        }
+        return curr.getData();
     }
 
     /**
@@ -55,17 +61,49 @@ public class CircularlyLinkedList<E> implements List<E> {
      */
     @Override
     public void add(int i, E e) {
-        // TODO
+        if (i < 0 || i > size) {
+            throw new IndexOutOfBoundsException("Invalid index");
+        }
+        if (i == 0) {
+            addFirst(e);
+        } else {
+            Node<E> prev = tail.getNext(); // Start from head
+            for (int j = 0; j < i - 1; j++) {
+                prev = prev.getNext();
+            }
+            Node<E> newest = new Node<>(e, prev.getNext());
+            prev.setNext(newest);
+            if (prev == tail) { // If we added at the end, update tail
+                tail.setNext(newest);
+            }
+        }
     }
 
     @Override
     public E remove(int i) {
-        // TODO
-        return null;
+        if (i < 0 || i >= size) {
+            throw new IndexOutOfBoundsException("Invalid index");
+        }
+        if (i == 0) {
+            return removeFirst();
+        } else {
+            Node<E> prev = tail.getNext(); // Start from head
+            for (int j = 0; j < i - 1; j++) {
+                prev = prev.getNext();
+            }
+            Node<E> toRemove = prev.getNext();
+            prev.setNext(toRemove.getNext());
+            if (toRemove == tail) { // If we removed the tail, update tail
+                tail.setNext(prev);
+            }
+            return toRemove.getData();
+        }
     }
 
     public void rotate() {
-        // TODO
+        if (tail != null) {
+            tail.setNext(tail.getNext()); // Old head becomes new tail
+        }
     }
 
     private class CircularlyLinkedListIterator<E> implements Iterator<E> {
@@ -97,24 +135,62 @@ public class CircularlyLinkedList<E> implements List<E> {
 
     @Override
     public E removeFirst() {
-        // TODO
-        return null;
+        if (tail == null) {
+            throw new IndexOutOfBoundsException("List is empty");
+        }
+        Node<E> head = tail.getNext();
+        if (head == tail) { // Only one element
+            tail.setNext(null);
+        } else {
+            tail.setNext(head.getNext());
+        }
+        return head.getData();
     }
 
     @Override
     public E removeLast() {
-        // TODO
-        return null;
+        if (tail == null) {
+            throw new IndexOutOfBoundsException("List is empty");
+        }
+        Node<E> head = tail.getNext();
+        if (head == tail) { // Only one element
+            tail.setNext(null);
+            return head.getData();
+        } else {
+            Node<E> prev = head;
+            while (prev.getNext() != tail) {
+                prev = prev.getNext();
+            }
+            prev.setNext(head);
+            E data = tail.getData();
+            tail.setNext(null); // Help GC
+            return data;
+        }
     }
 
     @Override
     public void addFirst(E e) {
-        // TODO
+        Node<E> newNode = new Node<>(e, null);
+        if (tail == null) {
+            tail.setNext(newNode);
+            tail.setNext(newNode); // Point to itself
+        } else {
+            newNode.setNext(tail.getNext());
+            tail.setNext(newNode);
+        }
     }
 
     @Override
     public void addLast(E e) {
-        // TODO
+        Node<E> newNode = new Node<>(e, null);
+        if (tail == null) {
+            tail.setNext(newNode);
+            tail.setNext(newNode); // Point to itself
+        } else {
+            newNode.setNext(tail.getNext());
+            tail.setNext(newNode);
+            tail.setNext(newNode); // Update tail to new node
+        }
     }
 
 
